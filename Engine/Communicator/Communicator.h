@@ -2,27 +2,44 @@
 
 namespace Communicator
 {
-	class CommunicatorBase
+	class AdMetaData
 	{
 	public:
-		BOOL Initialize( CString url );
-		BOOL Authenticate( CString username, CString password );
-		BOOL SendToServer( CString header, CString content );
-		BOOL GetFromServer( CString header, LPVOID buffer, DWORD size2read, DWORD bytesRead );
-		~CommunicatorBase(void);
+		DWORD AdType;
+		DWORD RelatedGame;
+	};
 
-	protected:
-		HINTERNET hSession;
-		HINTERNET hOPenUrl;
-		LPCWSTR url;
-		LPCWSTR username;
-		LPCWSTR password;
-		int user_id;
-		int authentication_id;
-		int error_flag;
+	class InternetPackage
+	{
+	public:
+		BOOL ErrorCode;
+		DWORD DataType; // i.e. text, img, etc.
+		LPVOID Data;
+		DWORD ContentLength;
+		inline ~InternetPackage(void)
+		{
+			delete [] this->Data;
+		}
+	};
+
+	class CommunicatorBase
+	{
+	public: // Public interface
+		~CommunicatorBase(void);
+		static CommunicatorBase Initialize( CString server );
+		BOOL Authenticate( CString username, CString password );
+		InternetPackage GetServer( CString target, CString params, DWORD type );
+		// InternetPackage PostServer( CString params);
+		DWORD GetErrorCode(void);
 
 	protected:
 		CommunicatorBase(void);
 		// TODO: write functions to do RSA encryption
+	protected:
+		LPCWSTR mpsz_serverUrl;
+		LPCWSTR mpsz_username;
+		LPCWSTR mpsz_password;
+		DWORD mdw_errorCode;
+		
 	};
 }
